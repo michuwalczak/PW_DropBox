@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Library;
 
 namespace PW_DropBox
 {
-    public class Client
+    public static class Client
     {
-
+        public static Cookie Cookie { get; set; }
     }
 }

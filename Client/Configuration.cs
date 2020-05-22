@@ -7,25 +7,21 @@ namespace PW_DropBox
     {
         private const string configFileName = @"\config.txt";
 
-        private static string fileDirectory;
-
-        private static void Load(string directory)
+        public static void Load(string directory)
         {
-            fileDirectory = directory;
             var jsonString = File.ReadAllText(directory + configFileName);
             var configurationFile = JsonSerializer.Deserialize<ConfigurationFile>(jsonString);
-            MaxThreads = configurationFile.MaxThreads;
             UserName = configurationFile.UserName;
+            LocalFolderDirectory = configurationFile.LocalFolderDirectory + @"\" + UserName;
         }
 
-        public static int MaxThreads { get; set; }
         public static string UserName { get; set; }
-        public static string FileDirectory { get { return fileDirectory; } set { Load(value); } }
+        public static string LocalFolderDirectory { get; set; }
 
         private class ConfigurationFile
         {
-            public int MaxThreads { get; set; }
             public string UserName { get; set; }
+            public string LocalFolderDirectory { get; set; }
         }
     }
 }

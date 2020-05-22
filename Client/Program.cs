@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,25 +22,51 @@ namespace PW_DropBox
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Load configuration
-            Configuration.FileDirectory = @"D:\Studia\Semestr_2\Programowanie wspolbiezne\Laboratorium\Projekt\Client";
+            Configuration.Load(Application.StartupPath);
 
-            connection.GetFileList();
+            connection.LogIn();
+
+            var serverFiles = connection.GetFileList();
+            var clientFiles = GetFilesList();
+            var newServerFiles = serverFiles.Except(clientFiles);
+
+            foreach (var file in newServerFiles)
+                connection.DownloadFile(file);
 
             // Start client thread
-            var fileWatcher = new FileWatcher(Configuration.FileDirectory);
+            var fileWatcher = new FileWatcher(Configuration.LocalFolderDirectory);
 
             fileWatcher.Changed += FileWatcher_Changed;
 
 
-            
-
-
-            Application.Run(new Form1());
+            var mainForm = new Form1();
+            mainForm.Text = Configuration.UserName;
+            mainForm.FormClosing += MainForm_FormClosing;
+            Application.Run(mainForm);
         }
 
         private static void FileWatcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
-            connection.UploadFile(e.Name);
+            var serverFiles = connection.GetFileList();
+            if(!serverFiles.Contains(e.Name))
+                connection.UploadFile(e.Name);
+        }
+
+        private static string[] GetFilesList()
+        {
+            return Directory.GetFiles(Configuration.LocalFolderDirectory).Select(Path.GetFileName).ToArray();
+        }
+
+        private static void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                connection.LogOut();
+            }
+            catch
+            {
+                Console.WriteLine("Connection log out error.");
+            }          
         }
     }
 }

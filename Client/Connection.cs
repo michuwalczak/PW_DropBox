@@ -1,49 +1,65 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using System.ServiceModel;
+using Library;
 
 namespace PW_DropBox
 {
     public class Connection
     {
+        private Uri adres = new Uri("http://localhost:2222/Server");
+
         public void DownloadFile(string fileName)
-        {
-            Uri adres = new Uri("http://localhost:2222/Server");
-            using (var channelFactory = new ChannelFactory<Interface.IDropBox>(
+        {           
+            using (var channelFactory = new ChannelFactory<IDropBox>(
               new BasicHttpBinding(),
               new EndpointAddress(adres)))
             {
                 var channel = channelFactory.CreateChannel();
-                channel.DownloadFile(Configuration.UserName, fileName, Configuration.FileDirectory);
+                channel.DownloadFile(Client.Cookie, fileName);
             }
         }
 
         public string[] GetFileList()
         {
-            Uri adres = new Uri("http://localhost:2222/Server");
-            using (var channelFactory = new ChannelFactory<Interface.IDropBox>(
+            using (var channelFactory = new ChannelFactory<IDropBox>(
               new BasicHttpBinding(),
               new EndpointAddress(adres)))
             {
                 var channel = channelFactory.CreateChannel();
-                return channel.FileList(Configuration.UserName);
+                return channel.FileList(Client.Cookie);
             }
         }
 
         public void UploadFile(string fileName)
         {
-            Uri adres = new Uri("http://localhost:2222/Server");
-            using (var channelFactory = new ChannelFactory<Interface.IDropBox>(
+            using (var channelFactory = new ChannelFactory<IDropBox>(
               new BasicHttpBinding(),
               new EndpointAddress(adres)))
             {
                 var channel = channelFactory.CreateChannel();
-                channel.UploadFile(Configuration.UserName, fileName, Configuration.FileDirectory);
+                channel.UploadFile(Client.Cookie, fileName);
+            }
+        }
+
+        public void LogIn()
+        {
+            using (var channelFactory = new ChannelFactory<IDropBox>(
+              new BasicHttpBinding(),
+              new EndpointAddress(adres)))
+            {
+                var channel = channelFactory.CreateChannel();
+                Client.Cookie = channel.LogIn(Configuration.UserName, Configuration.LocalFolderDirectory);
+            }
+        }
+
+        public void LogOut()
+        {
+            using (var channelFactory = new ChannelFactory<IDropBox>(
+              new BasicHttpBinding(),
+              new EndpointAddress(adres)))
+            {
+                var channel = channelFactory.CreateChannel();
+                channel.LogOut(Client.Cookie);
             }
         }
     }

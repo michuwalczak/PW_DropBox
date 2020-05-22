@@ -1,17 +1,23 @@
 ﻿using System.ServiceModel;
 
-namespace Interface
+namespace Library
 {
     [ServiceContract]
     public interface IDropBox
     {
         [OperationContract]
-        void DownloadFile(string ClientName, string fileName, string targetDirectory);
+        void DownloadFile(Cookie cookie, string fileName);
 
         [OperationContract]
-        string[] FileList(string ClientName);
+        string[] FileList(Cookie cookie);
 
         [OperationContract]
-        void UploadFile(string ClientName, string fileName, string sourceDirectory);
+        void UploadFile(Cookie cookie, string fileName);
+
+        [OperationContract]
+        Cookie LogIn(string clientName, string folderPath);
+
+        [OperationContract]
+        void LogOut(Cookie cookie);
     }
 }
