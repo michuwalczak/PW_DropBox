@@ -41,6 +41,17 @@ namespace PW_DropBox
             }
         }
 
+        public void DeleteFile(string fileName)
+        {
+            using (var channelFactory = new ChannelFactory<IDropBox>(
+              new BasicHttpBinding(),
+              new EndpointAddress(adres)))
+            {
+                var channel = channelFactory.CreateChannel();
+                channel.DeleteFile(Client.Cookie, fileName);
+            }
+        }
+
         public void LogIn()
         {
             using (var channelFactory = new ChannelFactory<IDropBox>(

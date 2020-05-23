@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.IO;
-using System.Threading;
-using Server;
 using Library;
 
 namespace PW_DropBox
@@ -63,6 +57,14 @@ namespace PW_DropBox
             serverTask.Account.TransferTotalSize += serverTask.Duration;
 
             Server.AddTask(serverTask);
+        }
+
+        // Delete file from server.
+        public void DeleteFile(Cookie cookie, string fileName)
+        {
+            var filePath = Configuration.ServerDirectory + "\\" + cookie.ClientName + "\\" + fileName;
+            if (File.Exists(filePath))
+                File.Delete(filePath);
         }
 
         // Login client

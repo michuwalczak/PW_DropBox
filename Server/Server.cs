@@ -149,11 +149,10 @@ namespace PW_DropBox
             if (serverTask.Status == ServerTask.TaskStatus.Finished)
                 RemoveTask(serverTask);
 
-            if (serverTask.Status == ServerTask.TaskStatus.Running)
-                Console.WriteLine(serverTask.FileName);
+            var taskCopy = (ServerTask)serverTask.FlatCopy();
 
             TasksListChanged?.Invoke(Tasks);
-            TasksStatusChanged?.Invoke(serverTask);
+            TasksStatusChanged?.Invoke(taskCopy);
             ClientListChanged?.Invoke(LoggedClients);
         }
     }

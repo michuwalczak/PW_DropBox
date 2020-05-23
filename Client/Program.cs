@@ -36,8 +36,8 @@ namespace PW_DropBox
             // Start client thread
             var fileWatcher = new FileWatcher(Configuration.LocalFolderDirectory);
 
-            fileWatcher.Changed += FileWatcher_Changed;
-
+            fileWatcher.Changed += File_Changed;
+            fileWatcher.Deleted += File_Deleted;
 
             var mainForm = new Form1();
             mainForm.Text = Configuration.UserName;
@@ -45,11 +45,16 @@ namespace PW_DropBox
             Application.Run(mainForm);
         }
 
-        private static void FileWatcher_Changed(object sender, System.IO.FileSystemEventArgs e)
+        private static void File_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
             var serverFiles = connection.GetFileList();
             if(!serverFiles.Contains(e.Name))
                 connection.UploadFile(e.Name);
+        }
+
+        private static void File_Deleted(object sender, System.IO.FileSystemEventArgs e)
+        {
+            connection.DeleteFile(e.Name);
         }
 
         private static string[] GetFilesList()

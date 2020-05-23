@@ -37,13 +37,6 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tbxLog = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tbxAssignedTasks = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbxRunningTasks = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.btnReloadConfig = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lvwThreadsDetails = new System.Windows.Forms.ListView();
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -52,6 +45,13 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tbxAssignedTasks = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tbxRunningTasks = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnReloadConfig = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -116,10 +116,56 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(3, 137);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(571, 373);
+            this.groupBox1.Size = new System.Drawing.Size(571, 443);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Tasks";
+            // 
+            // lvwThreadsDetails
+            // 
+            this.lvwThreadsDetails.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader13,
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader9,
+            this.columnHeader3,
+            this.columnHeader8,
+            this.columnHeader6});
+            this.lvwThreadsDetails.HideSelection = false;
+            this.lvwThreadsDetails.Location = new System.Drawing.Point(6, 33);
+            this.lvwThreadsDetails.Name = "lvwThreadsDetails";
+            this.lvwThreadsDetails.Size = new System.Drawing.Size(559, 404);
+            this.lvwThreadsDetails.TabIndex = 5;
+            this.lvwThreadsDetails.UseCompatibleStateImageBehavior = false;
+            this.lvwThreadsDetails.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader13
+            // 
+            this.columnHeader13.Text = "Id";
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "User name";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Operation name";
+            // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "File name";
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Task status";
+            // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Progress";
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Priority rate";
             // 
             // tbxAssignedTasks
             // 
@@ -185,64 +231,18 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.tbxLog);
-            this.groupBox3.Location = new System.Drawing.Point(3, 516);
+            this.groupBox3.Location = new System.Drawing.Point(3, 586);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(571, 91);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Log";
             // 
-            // lvwThreadsDetails
-            // 
-            this.lvwThreadsDetails.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader13,
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader9,
-            this.columnHeader3,
-            this.columnHeader8,
-            this.columnHeader6});
-            this.lvwThreadsDetails.HideSelection = false;
-            this.lvwThreadsDetails.Location = new System.Drawing.Point(6, 33);
-            this.lvwThreadsDetails.Name = "lvwThreadsDetails";
-            this.lvwThreadsDetails.Size = new System.Drawing.Size(559, 338);
-            this.lvwThreadsDetails.TabIndex = 5;
-            this.lvwThreadsDetails.UseCompatibleStateImageBehavior = false;
-            this.lvwThreadsDetails.View = System.Windows.Forms.View.Details;
-            // 
-            // columnHeader13
-            // 
-            this.columnHeader13.Text = "Id";
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "User name";
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Operation name";
-            // 
-            // columnHeader9
-            // 
-            this.columnHeader9.Text = "File name";
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Task status";
-            // 
-            // columnHeader8
-            // 
-            this.columnHeader8.Text = "Progress";
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "Priority rate";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(577, 610);
+            this.ClientSize = new System.Drawing.Size(577, 682);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);

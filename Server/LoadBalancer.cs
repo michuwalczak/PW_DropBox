@@ -33,12 +33,20 @@ namespace PW_DropBox
 
             busyTasks = tasks.Where(t => t.Status != ServerTask.TaskStatus.Waiting).ToList();
 
-            // Suspend threads with low priority
-            SuspendLowPriorityTasks(busyTasks);
 
-            // Start / resume tasks with high priority
-            RunHighPriorityTasks(busyTasks);
-        }
+            // Get tasks with low priority
+            var lowPriorityTasks = GetLowPriorityTasks(busyTasks);
+
+            // Get tasks with high priority
+            var highPriorityTasks = GetHighPriorityTasks(busyTasks);
+
+            // Suspend tasks with low priority
+            if(lowPriorityTasks.Count > 0)
+                SuspendTasks(lowPriorityTasks, highPriorityTasks);
+
+            // Start waiting tasks
+            StartTasks(highPriorityTasks);
+    }
 
         private static int AsessTaskPriority(ServerTask serverTask, int taskIndex)
         {
@@ -88,26 +96,45 @@ namespace PW_DropBox
             }
         }
 
-        private static void SuspendLowPriorityTasks(List<ServerTask> tasks)
+        private static List<ServerTask> GetLowPriorityTasks(List<ServerTask> tasks)
         {
+            List<ServerTask> lowPriorityTasks = new List<ServerTask>();
             for (int i = Configuration.MaxRunningThreads; i < tasks.Count; i++)
             {
                 if (tasks[i].Status == ServerTask.TaskStatus.Running)
-                    tasks[i].Suspend();
+                    lowPriorityTasks.Add(tasks[i]);
             }
+
+            return lowPriorityTasks;
         }
 
-        private static void RunHighPriorityTasks(List<ServerTask> tasks)
+        private static List<ServerTask> GetHighPriorityTasks(List<ServerTask> tasks)
         {
+            List<ServerTask> highPriorityTasks = new List<ServerTask>();
             var threadLimit = Configuration.MaxRunningThreads > tasks.Count ? tasks.Count : Configuration.MaxRunningThreads;
             for (int i = 0; i < threadLimit; i++)
             {
+                if (tasks[i].Status != ServerTask.TaskStatus.Running)
+                    highPriorityTasks.Add(tasks[i]);
+            }
+
+            return highPriorityTasks;
+        }
+    
+        private static void StartTasks(List<ServerTask> tasks)
+        {
+            for (int i = 0; i < tasks.Count; i++)
+            {
                 if (tasks[i].Status == ServerTask.TaskStatus.NotStarted)
                     tasks[i].Start();
-
-                if (tasks[i].Status == ServerTask.TaskStatus.Suspended)
-                    tasks[i].Resume();
             }
+        }
+
+        private static void SuspendTasks(List<ServerTask> lowPriorityTasks, List<ServerTask> highPriorityTasks)
+        {
+            for (int i = 0; i < highPriorityTasks.Count; i++)
+                if (highPriorityTasks[i].Status != ServerTask.TaskStatus.Suspended)
+                    highPriorityTasks[i].SuspendLowerPriorityTask(lowPriorityTasks[i]);
         }
     }
 }

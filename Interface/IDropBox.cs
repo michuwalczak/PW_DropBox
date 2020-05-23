@@ -15,6 +15,9 @@ namespace Library
         void UploadFile(Cookie cookie, string fileName);
 
         [OperationContract]
+        void DeleteFile(Cookie cookie, string fileName);
+
+        [OperationContract]
         Cookie LogIn(string clientName, string folderPath);
 
         [OperationContract]

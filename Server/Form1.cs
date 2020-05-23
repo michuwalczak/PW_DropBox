@@ -212,7 +212,6 @@ namespace PW_DropBox
 
         private void OnTaskStatusChanged(ServerTask serverTask)
         {
-
             UpdateLog(string.Format("Task status changed Client:{0} File:{1} Status:{2} Priority:{3} " +
                 "Running tasks:{4}/{5} Assigned tasks:{6}/{7}", 
                 serverTask.Account.Name, 

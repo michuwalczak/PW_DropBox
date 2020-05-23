@@ -9,28 +9,12 @@ namespace PW_DropBox
         public event ServerTaskHandler StatusChanged;
         public event ServerTaskHandler PriorityChanged;
 
-        private bool operationSuspension = false;
-        private readonly object operationLock = new object();
-        private bool OperationSuspension
-        {
-            get
-            {
-                lock(operationLock)
-                {
-                    return operationSuspension;
-                }
-            }
+        private readonly object statusLock = new object();
+        public Semaphore semaphore = new Semaphore(1, 1);
 
-            set
-            {
-                lock (operationLock)
-                {
-                    operationSuspension = value;
-                }
-            }
-        }
         private static int lastId = 0;
-
+        private TaskStatus status;
+        private ServerTask SuspendedTask;
 
         public enum TaskStatus
         {
@@ -62,7 +46,23 @@ namespace PW_DropBox
         public int Priority { get; private set; }
         public int Duration { get; set; }
         public int Progress { get; private set; }
-        public TaskStatus Status { get; private set; }
+        public TaskStatus Status
+        {
+            get
+            {
+                lock(statusLock)
+                {
+                    return status;
+                }
+            }
+            private set
+            {
+                lock (statusLock)
+                {
+                    status = value;
+                }
+            }
+        }
         public TaskType Type { get; private set; }
 
         private Thread ServerThread { get; set; }
@@ -81,16 +81,17 @@ namespace PW_DropBox
             ChangeStatus(TaskStatus.Started);
         }
 
-        public void Resume()
+        public void SuspendLowerPriorityTask(ServerTask task)
         {
-            OperationSuspension = false;
-            ChangeStatus(TaskStatus.Running);
+            SuspendedTask = task;
+            SuspendedTask.semaphore.WaitOne();
+            SuspendedTask.ChangeStatus(TaskStatus.Suspended);
         }
 
-        public void Suspend()
+        private void ResumeLowerPriorityTask()
         {
-            OperationSuspension = true;
-            ChangeStatus(TaskStatus.Suspended);
+            SuspendedTask.semaphore.Release();
+            SuspendedTask.ChangeStatus(TaskStatus.Running);
         }
 
         public void ChangePriority(int priority)
@@ -102,27 +103,41 @@ namespace PW_DropBox
             }
         }
 
+        public object FlatCopy()
+        {
+            return this.MemberwiseClone();
+        }
 
         private void CopyFile()
         {
             ChangeStatus(TaskStatus.Running);
-            
             Progress = 0;
             for (int i = 1; i <= Duration; i++)
             {
-                StopTask();
-                Thread.Sleep(1000);
+                try
+                {
+                    semaphore.WaitOne();
+                    Thread.Sleep(1000);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
                 ChangeProgress(i * 100 / Duration);
             }
+            System.IO.File.Copy(SourcePath, DestinationPath, true);
 
             Account.AssignedTasksCount--;
             ChangeStatus(TaskStatus.Finished);
+
+            if (SuspendedTask != null)
+                ResumeLowerPriorityTask();
         }
 
         private void ChangeStatus(TaskStatus taskStatus)
         {
             Status = taskStatus;
-            if(taskStatus == TaskStatus.Running)
+            if (taskStatus == TaskStatus.Running)
                 Account.RunningTasksCount++;
 
             if (taskStatus == TaskStatus.Suspended)
@@ -130,7 +145,7 @@ namespace PW_DropBox
 
             if (taskStatus == TaskStatus.Finished)
                 Account.RunningTasksCount--;
-
+            
             StatusChanged?.Invoke(this);
         }
 
@@ -138,11 +153,6 @@ namespace PW_DropBox
         {
             Progress = value;
             ProgressChanged?.Invoke(this);
-        }
-
-        private void StopTask()
-        {
-            while (OperationSuspension) ;
         }
     }
 }
