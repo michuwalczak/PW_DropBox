@@ -92,6 +92,7 @@ namespace PW_DropBox
         {
             SuspendedTask.semaphore.Release();
             SuspendedTask.ChangeStatus(TaskStatus.Running);
+
         }
 
         public void ChangePriority(int priority)
